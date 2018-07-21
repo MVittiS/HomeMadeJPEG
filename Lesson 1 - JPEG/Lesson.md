@@ -30,7 +30,7 @@ JPEG is a *color transforming* codec - it exploits the fact that countless exper
 * The U image, which is an abstract "color difference" plane, telling how much each pixel varies from the Y plane in the blue-yellow color axis.
 * The V image; same thing as the U plane, but in the red-green axis.
 
-![Example image with YUV separation]()
+![Example image with YUV separation](NachosYUV.png)
 
 ### Spatial Transforming
 
@@ -38,20 +38,16 @@ JPEG is a *spatially transforming* codec - it transforms (applies some well-defi
 
 It may sound counter-intuitive the first time you hear about "frequencies" when talking about images, because we don't often talk about images having "bass" or "treble", using the familiar musical terms. But there is a direct analog there: "bluriness" and "sharpness". The "sharper" an image is, the more high-frequency components it has; the "blurrier" it is, the less it has. The image below breaks down an image into JPEG's 64 frequency components, so you can "see" what exactly are those "frequencies" we're talking about.
 
-![Example image with DCT separation]()
+![Example image with DCT separation](NachosDCT.png)
 
 ## JPEG, the Image Container
 
 JPEG isn't just an image codec, but also an image *container*. The *JFIF* standard (an annex to the JPEG spec) describes a way to pack a raw JPEG stream into a file ready for viewing on web browsers, phones, cameras, TVs, and all devices that comply to the JFIF stadard. In reality, you don't need to pack a JPEG stream into a JFIF (.jpg) container: you could as well pack it into a Matroska (.mkv), Ogg (.ogg), or Windows MetaFile (.wmf) container and have the same image nevertheless. You don't even have use the correct extension for a JFIF container: it has special flags in the file header telling any interested application it *is* a JFIF file. You could use this fact to disguise them, as the game [Doki Doki Literature Club][link to DDLC wiki] does.
 
-![Image showing the Unix "file" command revealing that Natsuki's character file is in fact a JPEG image]()
-
-In the same way, a JFIF (.jpg) file *doesn't necessarily has to contain a JPEG stream*. You can put TIFF or BMP streams inside a .jpg file and it will work just fine.
-
-![Image showing the Unix "file" command revealing a .jpg file with a TIFF stream inside]()
+![Image showing the Unix "file" command revealing that Natsuki's character file is in fact a JPEG image](NatsukiFile.png)
 
 ## Block Diagram
 
 An overview of all the processing steps that a traditional 3-color channel (RGB) image goes, from raw pixels to the final .jpg file, is given in the diagram below - along with JPEG-1's algorithm choices for each of those steps.
 
-![Block Diagram detailing all of JPEG-1's processing steps, from pixels to .jpg file]()
+![Block Diagram detailing all of JPEG-1's processing steps, from pixels to .jpg file](BlockDiagram.png)
