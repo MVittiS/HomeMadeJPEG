@@ -19,20 +19,24 @@ end
 
 for by = 1 : size(nachosY, 3)
     for bx = 1 : size(nachosY, 2)
-        nachosY(:, bx, by) = dctMat * squeeze(nachosY(:, bx, by));
+       nachosY(:, bx, by) = dctMat * squeeze(nachosY(:, bx, by));
     end
 end
 
 nachosY = permute(nachosY, [2 3 1]);
+scaleFactor = 1.0 / (2 * max(max(max(abs(nachosY(:, :, 2:end))))));
 
-% 
-% for f = 1:size(nachos, 3)
-%     nachosY(:, :, f) = nachosY(:, :, f) - min(min(nachosY(:, :, f)));
-%     nachosY(:, :, f) = nachosY(:, :, f) ./ max(max(nachosY(:, :, f)));
-% end
-% 
-% 
-% nachosY = permute(nachosY, [3 1 2]);
+for f = 1:size(nachosY, 3)
+    if f == 1
+        nachosY(:, :, f) = nachosY(:, :, f) - min(min(nachosY(:, :, f)));
+        nachosY(:, :, f) = nachosY(:, :, f) ./ max(max(nachosY(:, :, f)));
+    else
+        nachosY(:, :, f) = 0.5 + ...
+            nachosY(:, :, f) * scaleFactor;
+    end
+end
 
 nachosY = reshape(nachosY, size(nachosY, 1), size(nachosY, 2), 8, 8);
 nachosY = reshape(permute(nachosY, [2 4 1 3]), size(nachos, 1), size(nachos, 2));
+
+imwrite(nachosY, 'NachosDCT.png');
