@@ -36,18 +36,20 @@ JPEG is a *color transforming* codec - it exploits the fact that countless exper
 
 JPEG is a *spatially transforming* codec - it transforms (applies some well-defined, reversible mathematical operation to) its input data in order to better compress it, when the time comes to quantize the data (the step that *removes* information from the image, and is necessary so that entropy coding can be effective). JPEG's weapon of choice is the [DCT transform][wikipedia link], that approximately breaks down an image into 64 (8x8) individual frequency components, all derived from the cosine function.
 
-It may sound counter-intuitive the first time you hear about "frequencies" when talking about images, because we don't often talk about images having "bass" or "treble", using the familiar musical terms. But there is a direct analog there: "bluriness" and "sharpness". The "sharper" an image is, the more high-frequency components it has; the "blurrier" it is, the less it has. The image below breaks down an image into JPEG's 64 frequency components, so you can "see" what exactly are those "frequencies" we're talking about.
+It may sound counter-intuitive the first time you hear about "frequencies" when talking about images, because we don't often talk about images having "bass" or "treble", using the familiar musical terms. But there is a direct analog there: "bluriness" and "sharpness". The "sharper" an image is, the more high-frequency components it has; the "blurrier" it is, the less it has. The image below is broken down into JPEG's 64 frequency components, so you can "see" what exactly are those "frequencies" we're talking about.
 
 ![Example image with DCT separation](NachosDCT.png)
 
 ## JPEG, the Image Container
 
-JPEG isn't just an image codec, but also an image *container*. The *JFIF* standard (an annex to the JPEG spec) describes a way to pack a raw JPEG stream into a file ready for viewing on web browsers, phones, cameras, TVs, and all devices that comply to the JFIF stadard. In reality, you don't need to pack a JPEG stream into a JFIF (.jpg) container: you could as well pack it into a Matroska (.mkv), Ogg (.ogg), or Windows MetaFile (.wmf) container and have the same image nevertheless. You don't even have use the correct extension for a JFIF container: it has special flags in the file header telling any interested application it *is* a JFIF file. You could use this fact to disguise them, as the game [Doki Doki Literature Club][link to DDLC wiki] does.
+JPEG isn't just an image codec, but also an image *container*. The *JFIF* standard (an annex to the JPEG spec, whose extended version became the *EXIF* container, popular with digital cameras and smartphones) describes a way to pack a raw JPEG stream into a file ready for viewing on web browsers, phones, cameras, TVs, and all devices that comply to the JFIF stadard. In reality, you don't need to pack a JPEG stream into a JFIF (.jpg) container: you could as well pack it into a Matroska (.mkv), Ogg (.ogg), or Windows MetaFile (.wmf) container and have the same image nevertheless. You don't even have use the correct extension for a JFIF container: it has a well-defined file header, telling any interested application it *is* a JFIF file when trying to open it. You could actually use this fact to disguise any JFIF file, as the game [Doki Doki Literature Club][link to DDLC wiki] does.
 
 ![Image showing the Unix "file" command revealing that Natsuki's character file is in fact a JPEG image](NatsukiFile.png)
 
 ## Block Diagram
 
-An overview of all the processing steps that a traditional 3-color channel (RGB) image goes, from raw pixels to the final .jpg file, is given in the diagram below - along with JPEG-1's algorithm choices for each of those steps.
+An overview of all the processing steps that a traditional 3-color channel (RGB) image goes, from raw pixels to the final .jpg file, is given in the diagram below - along with JPEG-1's algorithm choices for each of those steps. Blue rectangles represent the overall concepts, whereas pink rectangles denote JPEG's specific choices for each algorithm.
 
 ![Block Diagram detailing all of JPEG-1's processing steps, from pixels to .jpg file](BlockDiagram.png)
+
+Our goal with HMI is to replace those pink blocks one by one with more modern alternatives, and gradually build up our own image codec using the same foundation laid out by JPEG.
