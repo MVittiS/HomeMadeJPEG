@@ -12,13 +12,13 @@ Recall from the previous lesson that JPEG first splits up an image into three se
 > * The U image, which is an abstract "color difference" plane, telling how much each pixel varies from the Y plane in the blue-yellow color axis.
 > * The V image; same thing as the U plane, but in the red-green axis.
 >
-> ![Example image with YUV separation](../Lesson1/NachosYUV.png)
+> ![Example image with YUV separation](../Lesson 1 - JPEG/NachosYUV.png)
 
 ## The colorful truth
 
-I admittedly had to cheat a little bit when generating this image: the "color difference" planes, U and V, are actually scaled to **four times** their original values (in terms of contrast), just so the difference can clearly be seen. I don't have perfect vision, and my computer monitor isn't the fanciest, most color-correct in the world; I know, however, that my eyes could barely see any shapes in the V plane and saw little of the U plane before I scaled the differences. Here's what the original image looked like:
+I admittedly had to cheat a little bit when generating this image: the "color difference" planes, U and V, are actually **scaled** from their original values (in terms of contrast), just so the difference can clearly be seen. I don't have perfect vision, and my computer monitor isn't the fanciest, most color-correct in the world; I know, however, that my eyes have a hard time resolving detail with the U and V planes; I can mostly see blobs of color, but hardly the edges. Here's what the original image looks like, unscaled:
 
-![Example image with YUV separation, unscaled]()
+![Example image with YUV separation, unscaled](NachosYUVNoScaling.png)
 
 The Y plane, on the other hand, is very easy to see. This is due to the physiological nature of your eyes: [humans are about 10x more sensitive to *contrast* (bright/dark) changes than *hue* (color) changes][some link to human eye physiology]. There's some variation here and there, and some people have better or worse color separation than others (anomalies such as dichromats and tetrachromats exist, too), but using the average human as a model we know we can reduce the importance of color information in relation to contrast information without a significant degradation to the color impressions a person has when seeing an image. This is motivated by our next step in the compression chain, *downsampling*, where we'll discard some parts of the color information.
 
@@ -54,16 +54,18 @@ This isn't a problem nowadays, and is one of the least expensive operations in J
 
 ### 2. Downsampled YUV has artifacts
 
-A *modern* reason for replacing YUV, however, has to do with an artifact I call "red banding". Whenever there is a large segment of red, contrasting with either white or black on the screen, the downsampling on the V channel becomes the most noticeable - it breaks the illusion that such downsampling isn't losing any color detail perceptible to you; you become aware you're looking at a lower resolution image. I suspect this is the reason you see fewer logos with large red segments on the internet compared to real life, [despite red being the most distinguishable color to humans][link color naming evolution].
+A *modern* reason for replacing YUV, however, has to do with an artifact I call "red banding". Whenever there is a large segment of red, contrasting with either white or black on the screen, the downsampling on the V channel becomes the most noticeable - it breaks the illusion that such downsampling isn't losing any perceptible color detail; you become aware you're looking at a lower resolution image. I suspect this is the reason you see fewer logos with large red segments on the internet compared to real life, [despite red being the most distinguishable color to humans][link color naming evolution].
 
-![Image demontrating "red banding" with a red letter on black background]()
+![Image demontrating "red banding" with a red losangle on black background](RedJPG4x.png)
 
-This affects all sorts of entirely red-saturated objects: flowers, cars, neon signs, red ink, blood. By the same token, cyan (the complementary color of red in the RGB color space) should be equally affected; is isn't as perceptible, however, because humans are more sensitive to red than blue. Other completely saturated colors in the RGB color space, such as blue, green, pink, and yellow don't suffer much or at all from banding.
+This affects all sorts of entirely red-saturated objects with very sharp edges: text, flowers, cars, neon signs, red ink, blood. By the same token, cyan (the complementary color of red in the RGB color space) should be equally affected; is isn't as perceptible, however, because humans are more sensitive to red than blue. Other completely saturated colors in the RGB color space, such as blue, green, pink, and yellow don't suffer much or at all from banding.
 
 ![Demonstrations of lack of banding with other colors; text on black background]()
 
-## Our choice: the VCoCg model
+## Our alternative: the VCoCg model
 
-We're instead going to use a modern alternative proposed in the late 2000's, called the YCoCg color transform - Co for *Complementary orange*, and Cg for *Complementary green*. It was originally designed for simpler hardware implementation than the YUV transform, requiring only additions, subtractions, and bit-shifts - as opposed to the truckload of multiplications YUV requires. Interestingly enough, it looks perceptually better than YUV in some scenarios, and at least to my subjective assessment, it doesn't suffer from "red banding" - or any other kind of saturated color banding when downsampled.
+We're instead going to use a modern alternative proposed in the late 2000's, called the YCoCg color transform - Co for *Complementary orange*, and Cg for *Complementary green*. It was originally designed for simpler hardware implementation than the YUV transform, requiring only additions, subtractions, and bit-shifts - as opposed to the truckload of multiplications YUV requires. Interestingly enough, it looks perceptually better than YUV in some scenarios, and at least to my subjective assessment, it doesn't suffer from "red banding" - or any other kind of severe saturated color banding when downsampled.
 
 ![Demonstrations of lack of banding with the YCoCg model; text on black background]()
+
+Now, let's develop some code telling Octave/MatLAB how to convert an image from RGB into YUV.
